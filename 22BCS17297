@@ -1,0 +1,79 @@
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+
+@WebServlet("/login")
+public class LoginServlet extends HttpServlet {
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+
+        // Authentification simple (à remplacer par une vérification BD)
+        if ("admin".equals(username) && "1234".equals(password)) {
+            HttpSession session = request.getSession();
+            session.setAttribute("user", username);
+            response.sendRedirect("welcome.jsp");
+        } else {
+            response.sendRedirect("error.jsp");
+        }
+    }
+}
+
+
+
+
+//welcome jsp
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" session="true" %>
+<%
+    String user = (String) session.getAttribute("user");
+    if (user == null) {
+        response.sendRedirect("index.jsp");
+        return;
+    }
+%>
+<html>
+<head><title>Welcome</title></head>
+<body>
+    <h2>Welcome, <%= user %>!</h2>
+    <p>You have successfully logged in.</p>
+    <a href="index.jsp">Logout</a>
+</body>
+</html>
+
+
+
+//error.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" session="true" %>
+<%
+    String user = (String) session.getAttribute("user");
+    if (user == null) {
+        response.sendRedirect("index.jsp");
+        return;
+    }
+%>
+<html>
+<head><title>Welcome</title></head>
+<body>
+    <h2>Welcome, <%= user %>!</h2>
+    <p>You have successfully logged in.</p>
+    <a href="index.jsp">Logout</a>
+</body>
+</html>
+//web xml
+
+
+<web-app>
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+</web-app>
